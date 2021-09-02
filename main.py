@@ -1,6 +1,22 @@
 import sys
 import pygame
 
+def checkevent():
+    global ball_speed_x, ball_speed_y, player_score, opponent_score
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            sys.exit()
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_UP:
+                player_speed -= 5
+            if event.key == pygame.K_DOWN:
+                player_speed += 5
+        if event.type == pygame.KEYUP:
+            if event.key == pygame.K_UP:
+                player_speed += 5
+            if event.key == pygame.K_DOWN:
+                player_speed -= 5
+
 
 clock = pygame.time.Clock()
 white = (255, 255, 255)
@@ -24,7 +40,7 @@ player_speed = 0
 
 opponent = pygame.Rect(0, 260, 10, 70)
 opponent.right = screen_rect.right
-opponent_speed = 3
+opponent_speed = 5
 
 # Score Text
 player_score = 0
@@ -33,26 +49,15 @@ basic_font = pygame.font.Font('freesansbold.ttf', 32)
 
 
 while True:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            sys.exit()
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_UP:
-                player_speed -= 5
-            if event.key == pygame.K_DOWN:
-                player_speed += 5
-        if event.type == pygame.KEYUP:
-            if event.key == pygame.K_UP:
-                player_speed += 5
-            if event.key == pygame.K_DOWN:
-                player_speed -= 5
+    checkevent()
 
+    if player.top <= 0:
+	    player.top = 0
+    if player.bottom >=h:
+	    player.bottom = h
 
 # To make sure player remains in screen
-    if player.top <= 0:
-        player.top = 0
-    if player.bottom >= h:
-        player.bottom = w
+
 
 # movement of opponent
     if opponent.top < ball.y:
@@ -91,12 +96,13 @@ while True:
         screen, white, ball)
     pygame.draw.rect(
         screen, white, opponent)
+    pygame.draw.aaline(screen, light_grey, (w / 2, 0), (w / 2, h))
 
     player_text = basic_font.render(f'{player_score}', False, light_grey)
-    screen.blit(player_text, (600, 470))
+    screen.blit(player_text, (370, 250))
 
     opponent_text = basic_font.render(
         f'{opponent_score}', False, light_grey)
-    screen.blit(opponent_text, (660, 470))
+    screen.blit(opponent_text, (415, 250))
     pygame.display.flip()
     clock.tick(60)
